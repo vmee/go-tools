@@ -32,4 +32,5 @@ https://github.com/vmee/go-tools
 22. xerr 错误处理
 
 ## 后记
-如果你觉得有用， 请点个star再走
+- 我手上也有几个完整go-zero开发的项目，前后端app，未来再抽空整理下开源
+- 如果你觉得有用， 请点个star再走
