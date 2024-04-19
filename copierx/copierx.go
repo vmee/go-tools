@@ -44,6 +44,45 @@ var (
 		},
 	}
 
+	stringToSqlNullTimeConverter = copier.TypeConverter{
+		SrcType: copier.String,
+		DstType: sql.NullTime{},
+		Fn: func(src interface{}) (interface{}, error) {
+			s, ok := src.(string)
+			if !ok {
+				return nil, errors.New("src type not matching")
+			}
+
+			if s == "" {
+				return sql.NullTime{
+					Valid: false,
+				}, nil
+			}
+
+			// 解析日期时间字符串为时间对象
+			dateTime, err := time.Parse(constant.DateTime, s)
+			if err == nil {
+				return sql.NullTime{
+					Time:  dateTime,
+					Valid: true,
+				}, nil
+			}
+
+			// 解析日期字符串为时间对象
+			date, err := time.Parse(constant.DateOnly, s)
+			if err == nil {
+				return sql.NullTime{
+					Time:  date,
+					Valid: true,
+				}, nil
+			}
+
+			return sql.NullTime{
+				Valid: false,
+			}, nil
+		},
+	}
+
 	SqlNullTimeToStringConverter = copier.TypeConverter{
 		SrcType: sql.NullTime{},
 		DstType: copier.String,
@@ -67,6 +106,7 @@ func Copy(toValue interface{}, fromValue interface{}) (err error) {
 			timeToStringConverter,
 			stringToSqlNullStringConverter,
 			SqlNullTimeToStringConverter,
+			stringToSqlNullTimeConverter,
 		},
 	})
 }
