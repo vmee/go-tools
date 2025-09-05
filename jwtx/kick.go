@@ -48,3 +48,8 @@ func (l *Kicker) Verify(uid int64, token, client string) bool {
 
 	return md5 == tokMd5
 }
+
+func (l *Kicker) Del(uid int64, client string) error {
+	_, err := l.store.Hdel(l.getKey(client), strconv.FormatInt(uid, 10))
+	return err
+}
