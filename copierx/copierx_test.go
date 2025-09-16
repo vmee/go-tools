@@ -44,7 +44,7 @@ func TestCopy2(t *testing.T) {
 		Title:      "aa",
 		CreateTime: time.Now().Format("2006-01-02 15:04:05"),
 		TestTime:   sql.NullTime{Time: time.Now(), Valid: true},
-		Num:        sql.NullInt64{Int64: 123, Valid: true},
+		Num:        sql.NullInt64{Int64: 0, Valid: false},
 	}
 
 	t.Log(c)

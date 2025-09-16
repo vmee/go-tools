@@ -98,7 +98,7 @@ var (
 				return nil, errors.New("src type not matching")
 			}
 			if !s.Valid {
-				return 0, nil
+				return uint64(0), nil
 			}
 			return uint64(s.Int64), nil
 		},
