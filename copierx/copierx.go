@@ -9,6 +9,10 @@ import (
 	"github.com/vmee/go-tools/constant"
 )
 
+const (
+	Uint64 uint64 = 0
+)
+
 var (
 	timeToStringConverter = copier.TypeConverter{
 		SrcType: time.Time{},
@@ -19,6 +23,25 @@ var (
 				return nil, errors.New("src type not matching")
 			}
 			return s.Format(constant.DateTime), nil
+		},
+	}
+
+	stringToTimeConveter = copier.TypeConverter{
+		SrcType: copier.String,
+		DstType: time.Time{},
+		Fn: func(src interface{}) (interface{}, error) {
+			s, ok := src.(string)
+			if !ok {
+				return nil, errors.New("src type not matching")
+			}
+			if s == "" {
+				return time.Time{}, nil
+			}
+			t, err := time.Parse(constant.DateTime, s)
+			if err != nil {
+				return nil, err
+			}
+			return t, nil
 		},
 	}
 
@@ -41,6 +64,43 @@ var (
 				String: s,
 				Valid:  true,
 			}, nil
+		},
+	}
+
+	uint64ToSqlNullInt64Converter = copier.TypeConverter{
+		SrcType: Uint64,
+		DstType: sql.NullInt64{},
+		Fn: func(src interface{}) (interface{}, error) {
+			s, ok := src.(uint64)
+			if !ok {
+				return nil, errors.New("src type not matching")
+			}
+
+			if s == 0 {
+				return sql.NullInt64{
+					Valid: false,
+				}, nil
+			}
+
+			return sql.NullInt64{
+				Int64: int64(s),
+				Valid: true,
+			}, nil
+		},
+	}
+
+	sqlNullInt64ToUint64Converter = copier.TypeConverter{
+		SrcType: sql.NullInt64{},
+		DstType: Uint64,
+		Fn: func(src interface{}) (interface{}, error) {
+			s, ok := src.(sql.NullInt64)
+			if !ok {
+				return nil, errors.New("src type not matching")
+			}
+			if !s.Valid {
+				return 0, nil
+			}
+			return uint64(s.Int64), nil
 		},
 	}
 
@@ -104,9 +164,12 @@ func Copy(toValue interface{}, fromValue interface{}) (err error) {
 	return copier.CopyWithOption(toValue, fromValue, copier.Option{
 		Converters: []copier.TypeConverter{
 			timeToStringConverter,
+			stringToTimeConveter,
 			stringToSqlNullStringConverter,
 			SqlNullTimeToStringConverter,
 			stringToSqlNullTimeConverter,
+			uint64ToSqlNullInt64Converter,
+			sqlNullInt64ToUint64Converter,
 		},
 	})
 }
