@@ -91,7 +91,7 @@ func TencentRealName(ctx context.Context, secretId string, secretKey string, rea
 	httpClient.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	res, bs, err := httpClient.Post(url).SendBodyMap(bodyParams).EndBytes(ctx)
 	response := &tencentRealNameResponse{}
-	return false, fmt.Errorf("test error: %s", string(bs))
+	// return false, fmt.Errorf("test error: %s", string(bs))
 	jsonErr := jsoniter.UnmarshalFromString(string(bs), response)
 
 	if err != nil || jsonErr != nil || res.StatusCode != http.StatusOK {
