@@ -173,3 +173,18 @@ func Copy(toValue interface{}, fromValue interface{}) (err error) {
 		},
 	})
 }
+
+func CopyIgnoreEmpty(toValue interface{}, fromValue interface{}) (err error) {
+	return copier.CopyWithOption(toValue, fromValue, copier.Option{
+		Converters: []copier.TypeConverter{
+			timeToStringConverter,
+			stringToTimeConveter,
+			stringToSqlNullStringConverter,
+			SqlNullTimeToStringConverter,
+			stringToSqlNullTimeConverter,
+			uint64ToSqlNullInt64Converter,
+			sqlNullInt64ToUint64Converter,
+		},
+		IgnoreEmpty: true,
+	})
+}
