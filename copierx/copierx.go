@@ -37,7 +37,8 @@ var (
 			if s == "" {
 				return time.Time{}, nil
 			}
-			t, err := time.Parse(constant.DateTime, s)
+			// t, err := time.Parse(constant.DateTime, s)
+			t, err := time.ParseInLocation(constant.DateTime, s, time.Local)
 			if err != nil {
 				return nil, err
 			}
@@ -120,7 +121,8 @@ var (
 			}
 
 			// 解析日期时间字符串为时间对象
-			dateTime, err := time.Parse(constant.DateTime, s)
+			// dateTime, err := time.Parse(constant.DateTime, s)
+			dateTime, err := time.ParseInLocation(constant.DateTime, s, time.Local)
 			if err == nil {
 				return sql.NullTime{
 					Time:  dateTime,
@@ -129,7 +131,8 @@ var (
 			}
 
 			// 解析日期字符串为时间对象
-			date, err := time.Parse(constant.DateOnly, s)
+			// date, err := time.Parse(constant.DateOnly, s)
+			date, err := time.ParseInLocation(constant.DateOnly, s, time.Local)
 			if err == nil {
 				return sql.NullTime{
 					Time:  date,
